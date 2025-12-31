@@ -290,7 +290,7 @@
                                     <i class="fa-solid fa-wand-magic-sparkles fa-4x text-primary"></i>
                                 </div>
                                 <h4 class="fw-bold">Chargement Automatique</h4>
-                                <p class="text-muted small">Charger le fichier par défaut (efm gahii.xlsx)</p>
+                                <p class="text-muted small">Charger le fichier par défaut (efm-merouan.xlsx)</p>
                             </div>
                         </div>
                     </div>
@@ -557,8 +557,8 @@
 
             toggleLoading(true);
             try {
-                // Try to fetch the local file 'efm gahii.xlsx'
-                const response = await fetch('efm gahii.xlsx');
+                // Try to fetch the local file 'efm-merouan.xlsx'
+                const response = await fetch('efm-merouan.xlsx');
                 if (!response.ok) throw new Error("Fichier introuvable");
 
                 const arrayBuffer = await response.arrayBuffer();

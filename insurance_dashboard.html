@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord Assurance | Insurance Dashboard</title>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Tajawal:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-bg: #f3f4f6;
+            --sidebar-width: 280px;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --hover-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --gradient-primary: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            --gradient-success: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            --gradient-warning: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+            --gradient-info: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--primary-bg);
+            color: #1f2937;
+            overflow-x: hidden;
+        }
+
+        /* Loading Overlay */
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.04);
+            padding: 1rem 2rem;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #4f46e5 !important;
+        }
+
+        /* Cards Styling */
+        .stat-card {
+            border: none;
+            border-radius: 16px;
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .stat-card.bg-primary-gradient {
+            background: var(--gradient-primary);
+        }
+
+        .stat-card.bg-success-gradient {
+            background: var(--gradient-success);
+        }
+
+        .stat-card.bg-warning-gradient {
+            background: var(--gradient-warning);
+        }
+
+        .stat-card.bg-info-gradient {
+            background: var(--gradient-info);
+        }
+
+        .stat-card .icon-bg {
+            position: absolute;
+            right: -10px;
+            bottom: -20px;
+            font-size: 5rem;
+            opacity: 0.2;
+            transform: rotate(-15deg);
+        }
+
+        /* Upload Section */
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            background: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 2rem;
+        }
+
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: #4f46e5;
+            background: #eef2ff;
+        }
+
+        /* Filters Section */
+        .filter-section {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+        }
+
+        .form-select,
+        .form-control {
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            padding: 0.75rem;
+        }
+
+        .form-select:focus,
+        .form-control:focus {
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            border-color: #4f46e5;
+        }
+
+        /* Table Styling */
+        .table-container {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .table thead th {
+            background-color: #f8fafc;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            border-top: none;
+            padding: 1rem;
+        }
+
+        .table tbody td {
+            vertical-align: middle;
+            padding: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .status-badge {
+            padding: 0.35em 0.8em;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .badge-standard {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .badge-premium {
+            background: #ddd6fe;
+            color: #7c3aed;
+        }
+
+        .badge-vip {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        /* Action Buttons */
+        .btn-custom {
+            padding: 0.6rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary-custom {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary-custom:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+
+        .hover-scale {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hover-scale:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="d-none">
+        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+        <h5 class="text-muted">Traitement des données...</h5>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fa-solid fa-shield-halved me-2"></i>
+                Gestion d'Assurance
+            </a>
+            <div class="d-flex align-items-center">
+                <span class="text-muted ms-3 small me-3">
+                    <i class="fa-regular fa-clock me-1"></i>
+                    <span id="currentDate"></span>
+                </span>
+                <button class="btn btn-primary-custom btn-sm" onclick="document.getElementById('fileInput').click()">
+                    <i class="fa-solid fa-upload me-2"></i> Nouvel Import
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4 px-md-5">
+
+        <!-- Choice Section -->
+        <div id="choiceSection" class="row justify-content-center align-items-center min-vh-50 fade-in"
+            style="min-height: 60vh;">
+            <div class="col-md-8 text-center">
+                <h2 class="fw-bold mb-5 text-primary-gradient">Comment souhaitez-vous charger les données ?</h2>
+                <div class="row g-4 justify-content-center">
+                    <div class="col-md-5">
+                        <div class="card h-100 shadow-sm border-0 hover-scale cursor-pointer"
+                            onclick="loadAutomaticFile()">
+                            <div class="card-body p-5">
+                                <div class="mb-4">
+                                    <i class="fa-solid fa-wand-magic-sparkles fa-4x text-primary"></i>
+                                </div>
+                                <h4 class="fw-bold">Chargement Automatique</h4>
+                                <p class="text-muted small">Charger le fichier par défaut (efm gahii.xlsx)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="card h-100 shadow-sm border-0 hover-scale cursor-pointer"
+                            onclick="showManualImport()">
+                            <div class="card-body p-5">
+                                <div class="mb-4">
+                                    <i class="fa-solid fa-file-arrow-up fa-4x text-success"></i>
+                                </div>
+                                <h4 class="fw-bold">Import Manuel</h4>
+                                <p class="text-muted small">Choisir ou glisser un fichier Excel spécifique</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Section (Initially Hidden) -->
+        <div id="uploadSection" class="row justify-content-center mb-5 fade-in d-none">
+            <div class="col-md-8">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <button class="btn btn-sm btn-outline-secondary" onclick="showChoiceSection()">
+                        <i class="fa-solid fa-arrow-left me-1"></i> Retour
+                    </button>
+                    <h4>Importation Manuelle</h4>
+                </div>
+                <div class="upload-area" id="dropZone">
+                    <input type="file" id="fileInput" accept=".xlsx, .xls" class="d-none"
+                        onchange="handleFileSelect(event)">
+                    <div class="mb-3">
+                        <i class="fa-solid fa-file-excel fa-4x text-success"></i>
+                    </div>
+                    <h4>Glissez et déposez le fichier Excel ici</h4>
+                    <p class="text-muted">ou cliquez pour sélectionner un fichier de votre appareil</p>
+                    <button class="btn btn-outline-primary mt-2" onclick="document.getElementById('fileInput').click()">
+                        Choisir un fichier
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboardSection" class="d-none fade-in">
+            <h4 class="mb-4 fw-bold text-secondary">Tableau de Bord</h4>
+
+            <div class="row g-4 mb-5">
+                <!-- Total Premiums -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="stat-card bg-primary-gradient p-4 h-100">
+                        <div class="icon-bg"><i class="fa-solid fa-wallet"></i></div>
+                        <h6 class="text-white-50 mb-2">Total des Primes</h6>
+                        <h2 class="mb-0 fw-bold" id="totalPremiums">0 DH</h2>
+                    </div>
+                </div>
+
+                <!-- Total Contracts -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="stat-card bg-info-gradient p-4 h-100">
+                        <div class="icon-bg"><i class="fa-solid fa-file-contract"></i></div>
+                        <h6 class="text-white-50 mb-2">Total des Contrats</h6>
+                        <h2 class="mb-0 fw-bold" id="totalContracts">0</h2>
+                    </div>
+                </div>
+
+                <!-- Top City -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="stat-card bg-success-gradient p-4 h-100">
+                        <div class="icon-bg"><i class="fa-solid fa-location-dot"></i></div>
+                        <h6 class="text-white-50 mb-2">Top Ville</h6>
+                        <h2 class="mb-0 fw-bold" id="topCity">-</h2>
+                    </div>
+                </div>
+
+                <!-- VIP Clients -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="stat-card bg-warning-gradient p-4 h-100">
+                        <div class="icon-bg"><i class="fa-solid fa-crown"></i></div>
+                        <h6 class="text-white-50 mb-2">Clients VIP</h6>
+                        <h2 class="mb-0 fw-bold" id="vipCount">0</h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Stats Rows -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-8">
+                    <!-- Filters -->
+                    <div class="filter-section">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="fw-bold m-0"><i class="fa-solid fa-filter me-2 text-primary"></i> Filtrer les
+                                Données</h5>
+                            <button class="btn btn-sm btn-light text-danger" onclick="resetFilters()">
+                                <i class="fa-solid fa-rotate-right me-1"></i> Réinitialiser
+                            </button>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label small text-muted">Ville</label>
+                                <select class="form-select" id="filterCity">
+                                    <option value="">Tous</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small text-muted">Type d'Assurance</label>
+                                <select class="form-select" id="filterAssurance">
+                                    <option value="">Tous</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small text-muted">Type de Véhicule</label>
+                                <select class="form-select" id="filterVehicle">
+                                    <option value="">Tous</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <!-- Mini Charts / Distribution -->
+                    <div class="card border-0 shadow-sm h-100" style="border-radius: 16px;">
+                        <div class="card-body">
+                            <h6 class="fw-bold mb-3">Répartition des Véhicules</h6>
+                            <div id="vehicleDist" class="d-flex flex-column gap-3">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="table-container fade-in">
+                <h5 class="fw-bold mb-4">Détails des Contrats</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover" id="contractsTable">
+                        <thead>
+                            <tr>
+                                <th>Client ID</th>
+                                <th>Nom Complet</th>
+                                <th>Ville</th>
+                                <th>Véhicule</th>
+                                <th>Type Assurance</th>
+                                <th>Valeur Véhicule</th>
+                                <th>Prime Totale</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data rows go here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <span class="text-muted small" id="showingInfo">Affichage de 0 sur 0</span>
+                    <!-- Pagination could be added here if needed -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+    <script>
+        // --- State Management ---
+        let allData = [];
+        let filteredData = [];
+        let db;
+        const DB_NAME = 'InsuranceDB';
+        const STORE_NAME = 'contracts';
+
+        // --- Initialization ---
+        $(document).ready(function () {
+            setGreetingDate();
+            initDB();
+
+            // Drag and Drop listeners
+            const dropZone = document.getElementById('dropZone');
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
+            });
+
+            dropZone.addEventListener('drop', handleDrop, false);
+
+            // Filter listeners
+            $('#filterCity, #filterAssurance, #filterVehicle').on('change', applyFilters);
+        });
+
+        function showChoiceSection() {
+            $('#dashboardSection').addClass('d-none');
+            $('#uploadSection').addClass('d-none');
+            $('#choiceSection').removeClass('d-none');
+        }
+
+        function showManualImport() {
+            $('#choiceSection').addClass('d-none');
+            $('#uploadSection').removeClass('d-none');
+        }
+
+        // --- Modal for File Protocol Warning ---
+        const warningModalHtml = `
+        <div class="modal fade" id="protocolWarningModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                    <div class="modal-header border-0 pb-0">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center p-4">
+                        <div class="mb-3 text-warning">
+                            <i class="fa-solid fa-triangle-exclamation fa-4x"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Limitation de Sécurité</h4>
+                        <p class="text-muted mb-4">
+                            Les navigateurs bloquent la lecture automatique des fichiers locaux pour des raisons de sécurité (protocole <code>file://</code>).
+                        </p>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-success p-3 rounded-3 fw-bold" onclick="switchToManual()">
+                                <i class="fa-solid fa-hand-pointer me-2"></i> Utiliser l'Import Manuel
+                            </button>
+                            <a href="https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer" target="_blank" class="btn btn-light btn-sm mt-2 text-muted">
+                                <i class="fa-solid fa-server me-1"></i> Astuce : Utilisez "Live Server" pour le mode automatique
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+
+        $('body').append(warningModalHtml); // Append modal to body on ready
+
+        function switchToManual() {
+            var myModal = bootstrap.Modal.getInstance(document.getElementById('protocolWarningModal'));
+            myModal.hide();
+            showManualImport();
+        }
+
+        async function loadAutomaticFile() {
+            // Check for file protocol immediately
+            if (window.location.protocol === 'file:') {
+                var myModal = new bootstrap.Modal(document.getElementById('protocolWarningModal'));
+                myModal.show();
+                return;
+            }
+
+            toggleLoading(true);
+            try {
+                // Try to fetch the local file 'efm gahii.xlsx'
+                const response = await fetch('efm gahii.xlsx');
+                if (!response.ok) throw new Error("Fichier introuvable");
+
+                const arrayBuffer = await response.arrayBuffer();
+                const data = new Uint8Array(arrayBuffer);
+                const workbook = XLSX.read(data, { type: 'array' });
+
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                if (jsonData.length > 0) {
+                    // Check columns
+                    if (!jsonData[0].hasOwnProperty('ID_Client') || !jsonData[0].hasOwnProperty('Prime_Totale')) {
+                        alert("Le fichier automatique semble corrompu ou ne contient pas les bonnes colonnes.");
+                        toggleLoading(false);
+                        return;
+                    }
+
+                    allData = jsonData;
+                    await saveToDB(allData);
+                    initializeAppWithData();
+                } else {
+                    alert("Le fichier automatique est vide.");
+                }
+
+            } catch (error) {
+                console.error("Erreur chargement auto:", error);
+                alert("Impossible de charger le fichier automatiquement. Veuillez utiliser l'import manuel.");
+                showManualImport();
+            } finally {
+                toggleLoading(false);
+            }
+        }
+
+        function setGreetingDate() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').innerText = new Date().toLocaleDateString('fr-FR', options);
+        }
+
+        // --- IndexedDB Logic ---
+        function initDB() {
+            const request = indexedDB.open(DB_NAME, 1);
+
+            request.onerror = (event) => console.error("Erreur Base de Données: " + event.target.errorCode);
+
+            request.onupgradeneeded = (event) => {
+                db = event.target.result;
+                if (!db.objectStoreNames.contains(STORE_NAME)) {
+                    db.createObjectStore(STORE_NAME, { keyPath: "ID_Client" }); // Assuming ID_Client is unique
+                }
+            };
+
+            request.onsuccess = (event) => {
+                db = event.target.result;
+                loadDataFromDB();
+            };
+        }
+
+        function saveToDB(data) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([STORE_NAME], "readwrite");
+                const store = transaction.objectStore(STORE_NAME);
+
+                // Clear old data first? Or Merge? Let's Clear for this assignment to avoid duplicates/mess
+                const clearRequest = store.clear();
+
+                clearRequest.onsuccess = () => {
+                    let itemsProcessed = 0;
+                    data.forEach(item => {
+                        store.put(item);
+                        itemsProcessed++;
+                        if (itemsProcessed === data.length) {
+                            resolve();
+                        }
+                    });
+                    // Handle case of empty data
+                    if (data.length === 0) resolve();
+                };
+
+                clearRequest.onerror = (e) => reject(e);
+            });
+        }
+
+        // Helper to get data for App if needed
+        function loadDataFromDB() {
+            // ... existing logic but won't be called on init ...
+            const transaction = db.transaction([STORE_NAME], "readonly");
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.getAll();
+
+            request.onsuccess = () => {
+                if (request.result && request.result.length > 0) {
+                    allData = request.result;
+                    initializeAppWithData();
+                }
+            };
+        }
+
+        // --- File Handling ---
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            if (files.length === 0) return;
+            const file = files[0];
+
+            toggleLoading(true);
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                    if (jsonData.length > 0) {
+                        // Check if expected columns exist (basic validation)
+                        if (!jsonData[0].hasOwnProperty('ID_Client') || !jsonData[0].hasOwnProperty('Prime_Totale')) {
+                            alert("Le fichier ne semble pas contenir les colonnes requises. Veuillez vérifier le format.");
+                            toggleLoading(false);
+                            return;
+                        }
+
+                        allData = jsonData;
+                        saveToDB(allData).then(() => {
+                            initializeAppWithData();
+                            alert("Données importées et sauvegardées avec succès!");
+                        });
+                    } else {
+                        alert("Le fichier est vide !");
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert("Une erreur s'est produite lors de la lecture du fichier. Assurez-vous qu'il s'agit d'un fichier Excel valide.");
+                } finally {
+                    toggleLoading(false);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function toggleLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            if (show) overlay.classList.remove('d-none');
+            else overlay.classList.add('d-none');
+        }
+
+        // --- App Logic ---
+        function initializeAppWithData() {
+            // Hide all choice/upload sections, show dashboard
+            $('#choiceSection').addClass('d-none');
+            $('#uploadSection').addClass('d-none');
+            $('#dashboardSection').removeClass('d-none');
+
+            // Populate Filters
+            populateFilters();
+
+            // Initial Render
+            applyFilters();
+        }
+
+        function populateFilters() {
+            const cities = [...new Set(allData.map(d => d.Ville))].sort();
+            const types = [...new Set(allData.map(d => d.Type_Assurance))].sort();
+            const vehicles = [...new Set(allData.map(d => d.Type_Vehicule))].sort();
+
+            populateSelect('#filterCity', cities);
+            populateSelect('#filterAssurance', types);
+            populateSelect('#filterVehicle', vehicles);
+        }
+
+        function populateSelect(selector, items) {
+            const select = $(selector);
+            select.find('option:not(:first)').remove(); // Keep "All"
+            items.forEach(item => {
+                if (item) select.append(new Option(item, item));
+            });
+        }
+
+        function applyFilters() {
+            const city = $('#filterCity').val();
+            const type = $('#filterAssurance').val();
+            const vehicle = $('#filterVehicle').val();
+
+            filteredData = allData.filter(item => {
+                return (!city || item.Ville === city) &&
+                    (!type || item.Type_Assurance === type) &&
+                    (!vehicle || item.Type_Vehicule === vehicle);
+            });
+
+            renderDashboard();
+            renderTable();
+        }
+
+        function resetFilters() {
+            $('#filterCity').val('');
+            $('#filterAssurance').val('');
+            $('#filterVehicle').val('');
+            applyFilters();
+        }
+
+        // --- Rendering ---
+        function renderDashboard() {
+            // 1. Total Premiums
+            const totalPremiums = filteredData.reduce((sum, item) => sum + (parseFloat(item.Prime_Totale) || 0), 0);
+            $('#totalPremiums').text(formatCurrency(totalPremiums));
+
+            // 2. Total Contracts
+            $('#totalContracts').text(filteredData.length);
+
+            // 3. Top City
+            const cityCounts = {};
+            filteredData.forEach(d => cityCounts[d.Ville] = (cityCounts[d.Ville] || 0) + 1);
+            const topCity = Object.keys(cityCounts).reduce((a, b) => cityCounts[a] > cityCounts[b] ? a : b, '-');
+            $('#topCity').text(topCity !== '-' ? `${topCity} (${cityCounts[topCity]})` : '-');
+
+            // 4. VIP Count
+            const vipCount = filteredData.filter(d => d.Statut_Client === 'VIP').length;
+            $('#vipCount').text(vipCount);
+
+            // 5. Vehicle Distribution (Mini Viz)
+            const vehicleCounts = {};
+            let maxCount = 0;
+            filteredData.forEach(d => {
+                const v = d.Type_Vehicule || 'Inconnu';
+                vehicleCounts[v] = (vehicleCounts[v] || 0) + 1;
+                if (vehicleCounts[v] > maxCount) maxCount = vehicleCounts[v];
+            });
+
+            const distContainer = $('#vehicleDist');
+            distContainer.empty();
+
+            for (const [vehicle, count] of Object.entries(vehicleCounts)) {
+                const percent = (count / filteredData.length) * 100;
+                const barColor = getVehicleColor(vehicle);
+                const html = `
+                    <div>
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span class="fw-bold">${vehicle}</span>
+                            <span>${count} (${Math.round(percent)}%)</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar" role="progressbar" style="width: ${percent}%; background-color: ${barColor}" aria-valuenow="${percent}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                `;
+                distContainer.append(html);
+            }
+        }
+
+        function renderTable() {
+            const tbody = $('#contractsTable tbody');
+            tbody.empty();
+
+            if (filteredData.length === 0) {
+                tbody.append('<tr><td colspan="8" class="text-center py-4 text-muted">Aucune donnée à afficher</td></tr>');
+                $('#showingInfo').text('Affichage de 0 sur 0');
+                return;
+            }
+
+            const displayData = filteredData;
+
+            displayData.forEach(item => {
+                // Safe check for Prenom variations (with accent or lowercase)
+                const prenom = item.Prenom || item.Prénom || item.prenom || '';
+
+                const tr = `
+                    <tr>
+                        <td class="fw-bold text-primary">#${item.ID_Client}</td>
+                        <td>
+                            <div class="fw-bold">${item.Nom} ${prenom}</div>
+                            <small class="text-muted"><i class="fa-regular fa-id-card"></i> ${item.CIN}</small>
+                        </td>
+                        <td>${item.Ville}</td>
+                        <td><span class="badge bg-light text-dark border">${item.Type_Vehicule}</span> <small class="text-muted">${item.Marque}</small></td>
+                        <td>${item.Type_Assurance}</td>
+                        <td>${formatCurrency(item.Valeur_Vehicule)}</td>
+                        <td class="fw-bold text-success">${formatCurrency(item.Prime_Totale)}</td>
+                        <td>${getStatusBadge(item.Statut_Client)}</td>
+                    </tr>
+                `;
+                tbody.append(tr);
+            });
+
+            $('#showingInfo').text(`Affichage de ${filteredData.length} sur ${allData.length}`);
+        }
+
+        // --- Helpers ---
+        function formatCurrency(value) {
+            // Using fr-MA formatting for consistency with user location, currency MAD
+            return new Intl.NumberFormat('fr-MA', { style: 'currency', currency: 'MAD' }).format(value);
+        }
+
+        function getStatusBadge(status) {
+            let badgeClass = 'badge-standard';
+            if (status === 'Premium') badgeClass = 'badge-premium';
+            if (status === 'VIP') badgeClass = 'badge-vip';
+            return `<span class="status-badge ${badgeClass}">${status}</span>`;
+        }
+
+        function getVehicleColor(type) {
+            if (type === 'Voiture') return '#3b82f6';
+            if (type === 'Moto') return '#ef4444';
+            if (type === 'Camion') return '#10b981';
+            return '#6b7280';
+        }
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portail du Projet | Project Portal</title>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Tajawal:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-bg: #f3f4f6;
+            --gradient-primary: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            --gradient-secondary: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --hover-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--primary-bg);
+            color: #1f2937;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.04);
+            padding: 1rem 2rem;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #4f46e5 !important;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            padding: 4rem 1rem;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-weight: 800;
+            font-size: 3rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .hero-subtitle {
+            color: #6b7280;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Access Cards */
+        .access-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: var(--card-shadow);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+
+        .access-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .access-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: var(--gradient-primary);
+        }
+
+        .access-card.secondary::before {
+            background: var(--gradient-secondary);
+        }
+
+        .access-card.success::before {
+            background: var(--gradient-success);
+        }
+
+        .card-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .text-primary-gradient {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-secondary-gradient {
+            background: var(--gradient-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-success-gradient {
+            background: var(--gradient-success);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Tech Stack Footer */
+        .tech-footer {
+            background: white;
+            margin-top: auto;
+            padding: 3rem 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .tech-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background: #f3f4f6;
+            border-radius: 50px;
+            margin: 0.5rem;
+            font-weight: 600;
+            color: #4b5563;
+            transition: all 0.3s;
+        }
+
+        .tech-badge:hover {
+            background: #e0e7ff;
+            color: #4338ca;
+            transform: scale(1.05);
+        }
+
+        .tech-badge i {
+            margin-right: 0.5rem;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fa-solid fa-layer-group me-2"></i>
+                Mon Projet FullStack
+            </a>
+            <span class="badge bg-light text-primary border rounded-pill px-3 py-2">
+                Développement Digital
+            </span>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero-section">
+        <h1 class="hero-title">Tableau de Bord Principal</h1>
+        <p class="hero-subtitle">
+            Bienvenue sur le portail de mon projet. Accédez à l'application de gestion des assurances ou consultez la
+            présentation du projet.
+        </p>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container pb-5">
+        <div class="row g-4 justify-content-center">
+
+            <!-- App Card -->
+            <div class="col-lg-4 col-md-6">
+                <a href="insurance_dashboard.html" class="access-card">
+                    <div class="card-icon text-primary-gradient">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <h3 class="fw-bold mb-3">Application Web</h3>
+                    <p class="text-muted mb-4">
+                        Accédez au tableau de bord interactif pour gérer les contrats d'assurance.
+                    </p>
+                    <div class="d-flex align-items-center text-primary fw-bold">
+                        Lancer l'application <i class="fa-solid fa-arrow-right ms-2"></i>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Presentation Card -->
+            <div class="col-lg-4 col-md-6">
+                <a href="Red Photo Missing Dog Ad Flyer - Copy.pptx" class="access-card secondary">
+                    <div class="card-icon text-secondary-gradient">
+                        <i class="fa-solid fa-file-powerpoint"></i>
+                    </div>
+                    <h3 class="fw-bold mb-3">Présentation</h3>
+                    <p class="text-muted mb-4">
+                        Téléchargez et visionnez la présentation PowerPoint détaillée du projet.
+                    </p>
+                    <div class="d-flex align-items-center text-danger fw-bold">
+                        Télécharger PPTX <i class="fa-solid fa-download ms-2"></i>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Excel Card -->
+            <div class="col-lg-4 col-md-6">
+                <a href="efm gahii.xlsx" class="access-card success">
+                    <div class="card-icon text-success-gradient">
+                        <i class="fa-solid fa-file-excel"></i>
+                    </div>
+                    <h3 class="fw-bold mb-3">Données Excel</h3>
+                    <p class="text-muted mb-4">
+                        Téléchargez le fichier de données source utilisé pour l'application.
+                    </p>
+                    <div class="d-flex align-items-center text-success fw-bold">
+                        Télécharger XLSX <i class="fa-solid fa-download ms-2"></i>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Tech Stack Footer -->
+    <footer class="tech-footer text-center">
+        <div class="container">
+            <h5 class="fw-bold mb-4 text-secondary">Technologies & Outils Utilisés</h5>
+            <div class="d-flex flex-wrap justify-content-center">
+                <div class="tech-badge" title="Structure sémantique">
+                    <i class="fa-brands fa-html5 text-orange"></i> HTML5
+                </div>
+                <div class="tech-badge" title="Styles modernes">
+                    <i class="fa-brands fa-css3-alt text-blue"></i> CSS3
+                </div>
+                <div class="tech-badge" title="Framework CSS">
+                    <i class="fa-brands fa-bootstrap text-purple"></i> Bootstrap 5
+                </div>
+                <div class="tech-badge" title="Logique & DOM">
+                    <i class="fa-brands fa-js text-yellow"></i> JavaScript (ES6+)
+                </div>
+                <div class="tech-badge" title="Simplification DOM">
+                    <i class="fa-solid fa-code"></i> jQuery
+                </div>
+                <div class="tech-badge" title="Stockage Local">
+                    <i class="fa-solid fa-database text-green"></i> IndexedDB
+                </div>
+                <div class="tech-badge" title="Traitement Excel">
+                    <i class="fa-solid fa-file-excel text-success"></i> SheetJS
+                </div>
+                <div class="tech-badge" title="Icônes">
+                    <i class="fa-solid fa-icons text-info"></i> FontAwesome
+                </div>
+            </div>
+            <div class="mt-5 mb-4">
+                <div class="d-inline-flex align-items-center bg-white shadow-sm rounded-pill px-4 py-2 border">
+                    <span class="text-muted small me-2 text-uppercase fw-bold"
+                        style="letter-spacing: 1px; font-size: 0.75rem;">Développé par</span>
+                    <span class="fw-bold"
+                        style="background: linear-gradient(135deg, #4f46e5, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.1rem;">
+                        Merouan Errachidi
+                    </span>
+                    <i class="fa-solid fa-laptop-code ms-2 text-secondary"></i>
+                </div>
+            </div>
+
+            <div class="text-muted small">
+                © 2025 Projet de Développement Digital - Web FullStack
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

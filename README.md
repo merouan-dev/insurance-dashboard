@@ -8,6 +8,9 @@
 
 ## 🚀 Démo en Ligne
 
+<img width="1879" height="926" alt="image" src="https://github.com/user-attachments/assets/9ba0172c-a908-4a16-a373-6d85c4af0cee" />
+
+
 **[👉 Accéder à l'application](https://merouan-dev.github.io/insurance-dashboard/)**
 
 ---
